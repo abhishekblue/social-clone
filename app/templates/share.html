@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if form %}
+    <form  method=POST>
+        {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit" class="btn btn-secondary">Post</button>
+    </form>
+    <hr>
+{% endif %}
+
+    <div class="alert alert-secondary" role="alert">
+        {{ meep }}
+        {% if user in meep.likes.all %}
+        <div><small class="text-muted">{{ meep.number_of_likes }} Likes - <a href="{% url "meep_like" meep.id %}">Unike</a></small></div>
+        {% else %}
+        <div><small class="text-muted">{{ meep.number_of_likes }} Likes - <a href="{% url "meep_like" meep.id %}">Like</a></small></div>
+        {% endif %}
+    </div>
+{% endblock content %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if profile %}
+     <h1> {{ profile.user.username}}'s Profile </h1>
+     {% if request.user.id == profile.user.id %}
+    <a href="{% url "update_user" %}" class="btn btn-secondary">Update</a>
+{% endif %}
+<br>
+{% if profile.profile_image %}
+    <img src="{{ profile.profile_image.url }}">
+{% endif %}
+
+<hr>
+
+<strong>Follows: </strong><br>
+{% for following in profile.follows.all %}
+    <ul>
+    <li><a href="{% url "profile" following.user_id %}"> @{{ following }} </a></li> 
+    </ul>
+{% endfor %}
+
+<hr><strong>Followed by</strong>
+{% for following in profile.followed_by.all %}
+<ul>
+<li><a href="{% url "profile" following.user_id %}"> @{{ following }} </a></li> 
+</ul>
+{% endfor %}
+
+<form method="POST">
+    {% csrf_token %}
+    {% if profile in user.profile.follows.all %}
+    <button class="btn btn-danger" value="unfollow" name="follow" type="submit">Unfollow</button>
+    {% else %}
+    <button class="btn btn-primary" value="follow" name="follow" type="submit">Follow</button>
+    {% endif %}
+</form>
+<hr>
+    {% if meeps %}
+    <h3> My Posts </h3>
+    {% for meep in meeps %}
+    <div class="alert alert-secondary" role="alert">
+        {{ meep }}
+        {% if user in meep.likes.all %}
+        <div><small class="text-muted">{{ meep.number_of_likes }} Likes - <a href="{% url "meep_like" meep.id %}">Unike</a></small></div>
+        {% else %}
+        <div><small class="text-muted">{{ meep.number_of_likes }} Likes - <a href="{% url "meep_like" meep.id %}">Like</a></small></div>
+        {% endif %}
+        <div><small class="text-muted"><a href="{% url "share" meep.id %}">Share</a></small></div>
+    </div>
+    
+{% endfor %}
+    {% endif %}
+{% endif %}
+{% endblock content %}
